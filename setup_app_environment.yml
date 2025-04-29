@@ -1,0 +1,28 @@
+---
+- name: Setup App Environment
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Création du répertoire /app_data
+      ansible.builtin.file:
+        path: /app_data
+        state: directory
+      
+    - name: Création du groupe app_group
+      ansible.builtin.group:
+        name: app_group
+        state: present
+
+    - name: Création de l'utilisateur app_user et ajout au groupe app_group
+      ansible.builtin.user:
+        name: app_user
+        group: app_group
+        comment: User App
+     
+    - name: Application des droits et permissions sur /app_data
+      ansible.builtin.file:
+        path: /app_data
+        owner: app_user
+        group: app_group
+        mode: '0744'
