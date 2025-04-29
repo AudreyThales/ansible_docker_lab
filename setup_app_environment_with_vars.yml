@@ -1,0 +1,32 @@
+---
+- name: Setup Application Environment with Variables
+  hosts: all
+  become: yes
+  vars:
+    app_directory:
+      - /app_data
+      - /app_logs
+      - /app_config
+  tasks:
+   
+    - name: Création répertoires
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      loop: "{{ app_directory }}"
+
+    - name: Création groupe
+      ansible.builtin.group:
+        name: app_group
+        state: present
+
+    - name: Création user appli et ajout au groupe
+      ansible.builtin.user: 
+        name: app_user
+        group: app_group
+        comment: User App
+
+    - name: change
+      ansible.builtin.file:
+        path: /app_data
+        owner: app_user
